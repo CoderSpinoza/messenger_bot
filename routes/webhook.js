@@ -27,7 +27,7 @@ router.post('/', function(req, res, next) {
       text = event.message.text;
       // Handle a text message from this sender
       request.post({url: "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token,
-      form: {recipient: {id: sender}, text: "안녕하세요, 8 Seconds입니다. :)"}}, function(err, res, body) {
+      form: {recipient: {id: sender}, message: {text: "안녕하세요, 8 Seconds입니다. :)"}}}, function(err, res, body) {
         if (err) {
           console.log(err);
         } else {
