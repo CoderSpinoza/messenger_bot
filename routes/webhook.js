@@ -9,6 +9,10 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
+  console.log(req.body.entry);
+  if (req.body.entry && req.body.entry.length == 0) {
+    return res.sendStatus(500);
+  }
   messaging_events = req.body.entry[0].messaging;
   for (i = 0; i < messaging_events.length; i++) {
     event = req.body.entry[0].messaging[i];
