@@ -29,7 +29,7 @@ router.post('/', function(req, res, next) {
 
       nlp.processText(sender, text, function(err, message) {
         request.post({url: "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token,
-        form: {recipient: {id: sender}, message: message}}, function(err, res, body) {
+        form: message, function(err, res, body) {
           if (err) {
             console.log(err);
           } else {
