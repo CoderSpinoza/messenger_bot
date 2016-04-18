@@ -1,5 +1,8 @@
 var express = require('express');
 var router = express.Router();
+var request = require('request');
+
+var access_token = "CAADk55E4jhUBADAlNpoZCthS4VA20NmXiD4ZBmbZCy9vk1I9SRt4KzUsaAHzd8F8zMw2YwQfATcis64ePJNI6JKH7Fp7fuTbWTuFdwVNZBkbWUEIWx45FMPFahdo16grmTYqfnUzOvEMZAid6ONUF4eT9DcKY2ZBPGNyXxOnBwo71ohXJFVqnrUYwl2sZAPb1wZD";
 
 router.get('/', function(req, res, next) {
   if (req.query['hub.verify_token'] === 'coderspinoza_validation_token') {
@@ -22,8 +25,15 @@ router.post('/', function(req, res, next) {
     console.log("sender: " + sender);
     if (event.message && event.message.text) {
       text = event.message.text;
-      console.log("text: " + text);
       // Handle a text message from this sender
+      request.post({url: "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token,
+      form: {recipient: {id: sender}, text: "안녕하세요, 8 Seconds입니다. :)"}}, function(err, res, body) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(body);
+        }
+      });
     }
   }
   res.sendStatus(200);
