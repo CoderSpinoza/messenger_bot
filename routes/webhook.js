@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
+var nlp = require('../models/nlp');
 
 var access_token = "CAADk55E4jhUBADAlNpoZCthS4VA20NmXiD4ZBmbZCy9vk1I9SRt4KzUsaAHzd8F8zMw2YwQfATcis64ePJNI6JKH7Fp7fuTbWTuFdwVNZBkbWUEIWx45FMPFahdo16grmTYqfnUzOvEMZAid6ONUF4eT9DcKY2ZBPGNyXxOnBwo71ohXJFVqnrUYwl2sZAPb1wZD";
 
@@ -12,9 +13,8 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-  console.log(req.body.entry);
-  if (req.body.entry && req.body.entry.length == 0) {
-    console.log("entry is empty...");
+  if (!req.body.entry || req.body.entry.length == 0) {
+    console.log("message entry is empty...");
     return res.sendStatus(500);
   }
   messaging_events = req.body.entry[0].messaging;
@@ -26,13 +26,16 @@ router.post('/', function(req, res, next) {
     if (event.message && event.message.text) {
       text = event.message.text;
       // Handle a text message from this sender
-      request.post({url: "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token,
-      form: {recipient: {id: sender}, message: {text: "안녕하세요, 8 Seconds입니다. :)"}}}, function(err, res, body) {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log(body);
-        }
+
+      nlp.processText(sender, text, function(err, message) {
+        request.post({url: "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token,
+        form: {recipient: {id: sender}, message: message}}, function(err, res, body) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log(body);
+          }
+        });
       });
     }
   }
