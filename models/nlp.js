@@ -35,7 +35,6 @@ var fbMessage = function(recipientId, msg, cb) {
 
   return request.post({url: "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token, form: form}, function(err, res, body) {
     if (cb) {
-      console.log("sent request...");
       return cb(err || body.error && body.error.message, body);
     }
   });
@@ -128,7 +127,7 @@ nlp.buildSimple = function(userId, text) {
 
 nlp.processText = function(sessionId, msg, atts, context, cb) {
   wit.runActions(sessionId, msg, context, function(err, context) {
-    return cb(err);
+    return cb(err, context);
   });
 };
 
