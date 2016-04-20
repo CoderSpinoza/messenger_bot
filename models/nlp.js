@@ -53,9 +53,12 @@ var actions = {
   },
   merge: function(sessionId, context, entities, message, cb) {
     var loc = firstEntityValue(entities, 'location');
+    var cloth_type = firstEntityValue(entities, 'cloth_type');
     if (loc) {
       context.loc = loc;
     }
+
+    if (cloth_type) context.cloth_type = cloth_type;
     return cb(context);
   },
   error: function(sessonId, context, err) {
