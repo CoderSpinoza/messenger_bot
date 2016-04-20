@@ -15,15 +15,8 @@ var firstEntityValue = function(entities, entity) {
   return typeof val === 'object' ? val.value : val;
 };
 
-var fbRequest = request.defaults({
-  uri: 'https://graph.facebook.com/me/messages',
-  method: 'POST',
-  json: true,
-  qs: {access_token: 'CAADk55E4jhUBADAlNpoZCthS4VA20NmXiD4ZBmbZCy9vk1I9SRt4KzUsaAHzd8F8zMw2YwQfATcis64ePJNI6JKH7Fp7fuTbWTuFdwVNZBkbWUEIWx45FMPFahdo16grmTYqfnUzOvEMZAid6ONUF4eT9DcKY2ZBPGNyXxOnBwo71ohXJFVqnrUYwl2sZAPb1wZD'},
-  headers: {'Content-Type': 'application/json'}
-});
-
 var fbMessage = function(recipientId, msg, cb) {
+  console.log("recipientId: " + recipientId);
   var form = {
     "recipient": {
       "id": recipientId
