@@ -4,7 +4,6 @@ var request = require('request');
 var nlp = require('../models/nlp');
 
 var sessions = {};
-var access_token = "CAADk55E4jhUBADAlNpoZCthS4VA20NmXiD4ZBmbZCy9vk1I9SRt4KzUsaAHzd8F8zMw2YwQfATcis64ePJNI6JKH7Fp7fuTbWTuFdwVNZBkbWUEIWx45FMPFahdo16grmTYqfnUzOvEMZAid6ONUF4eT9DcKY2ZBPGNyXxOnBwo71ohXJFVqnrUYwl2sZAPb1wZD";
 
 var getFirstMessagingEntry = function(body) {
   var val = body.object == 'page' && body.entry &&

@@ -4,6 +4,17 @@ var Wit = require('node-wit').Wit;
 var request = require('request');
 var access_token = "CAADk55E4jhUBADAlNpoZCthS4VA20NmXiD4ZBmbZCy9vk1I9SRt4KzUsaAHzd8F8zMw2YwQfATcis64ePJNI6JKH7Fp7fuTbWTuFdwVNZBkbWUEIWx45FMPFahdo16grmTYqfnUzOvEMZAid6ONUF4eT9DcKY2ZBPGNyXxOnBwo71ohXJFVqnrUYwl2sZAPb1wZD";
 
+var firstEntityValue = function(entities, entity) {
+  var val = entities && entities[entity] &&
+    Array.isArray(entities[entity]) &&
+    entities[entity].length > 0 &&
+    entities[entity][0].value;
+  if (!val) {
+    return null;
+  }
+  return typeof val === 'object' ? val.value : val;
+};
+
 var fbRequest = request.defaults({
   uri: 'https://graph.facebook.com/me/messages',
   method: 'POST',
@@ -42,10 +53,18 @@ var actions = {
     });
   },
   merge: function(sessionId, context, entities, message, cb) {
+    var loc = firstEntityValue(entities, 'location');
+    if (loc) {
+      context.loc = loc;
+    }
     return cb(context);
   },
   error: function(sessonId, context, err) {
     console.log(err.message);
+  },
+  'fetch-weather': function(sessionId, context, cb) {
+    context.forecast = 'sunny';
+    return cb(context);
   }
 };
 
