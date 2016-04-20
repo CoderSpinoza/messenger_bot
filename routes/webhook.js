@@ -3,7 +3,31 @@ var router = express.Router();
 var request = require('request');
 var nlp = require('../models/nlp');
 
+var sessions = {};
 var access_token = "CAADk55E4jhUBADAlNpoZCthS4VA20NmXiD4ZBmbZCy9vk1I9SRt4KzUsaAHzd8F8zMw2YwQfATcis64ePJNI6JKH7Fp7fuTbWTuFdwVNZBkbWUEIWx45FMPFahdo16grmTYqfnUzOvEMZAid6ONUF4eT9DcKY2ZBPGNyXxOnBwo71ohXJFVqnrUYwl2sZAPb1wZD";
+
+var getFirstMessagingEntry = function(body) {
+  var val = body.object == 'page' && body.entry &&
+  Array.isArray(body.entry) && body.entry.length > 0 && body.entry[0] &&
+  body.entry[0].messaging && Array.isArray(body.entry[0].messaging) &&
+  body.entry[0].messaging.length > 0 && body.entry[0].messaging[0];
+  return val || null;
+};
+
+var findOrCreateSession = function(fbId) {
+  var sessionId;
+  Object.keys(sessions).forEach(function(k) {
+    if (sessions[k].fbId == fbId) {
+      sessionId = k;
+    }
+  });
+
+  if (!sessionId) {
+    sessionId = new Date().toISOString();
+    sessions[sessionId] = {fbId: fbId, context: {}};
+  }
+  return sessionId;
+};
 
 router.get('/', function(req, res, next) {
   if (req.query['hub.verify_token'] === 'coderspinoza_validation_token') {
@@ -13,32 +37,26 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-  if (!req.body.entry || req.body.entry.length == 0) {
-    console.log("message entry is empty...");
-    return res.sendStatus(500);
-  }
-  messaging_events = req.body.entry[0].messaging;
-  console.log("message length: " + messaging_events.length);
-  for (i = 0; i < messaging_events.length; i++) {
-    event = req.body.entry[0].messaging[i];
-    sender = event.sender.id;
-    console.log("sender: " + sender);
-    if (event.message && event.message.text) {
-      text = event.message.text;
-      // Handle a text message from this sender
+  var messaging = getFirstMessagingEntry(req.body);
 
-      nlp.processText(sender, text, function(err, message) {
-        request.post({url: "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token,
-        form: message}, function(err, res, body) {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log(body);
-          }
-        });
+  if (messaging && messaging.message) {
+    var sender = messaging.sender.id;
+    var sessionId = findOrCreateSession(sender);
+
+    var msg = messaging.message.text;
+    var atts = messaging.message.attachments;
+
+    if (msg) {
+      nlp.processText(sender, msg, atts, sessions[sessionId].context, function(err, context) {
+        if (err) {
+          console.log("Error with nlp engine..");
+          return res.status(500).send();
+        }
+
+        sessions[sessionId].context = context;
       });
     }
   }
-  res.sendStatus(200);
+  return res.status(200).send();
 });
 module.exports = router;
