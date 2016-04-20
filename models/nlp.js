@@ -2,6 +2,7 @@ var nlp = {};
 var url = "https://seconds-messenger.herokuapp.com/webhook";
 var Wit = require('node-wit').Wit;
 var request = require('request');
+var access_token = "CAADk55E4jhUBADAlNpoZCthS4VA20NmXiD4ZBmbZCy9vk1I9SRt4KzUsaAHzd8F8zMw2YwQfATcis64ePJNI6JKH7Fp7fuTbWTuFdwVNZBkbWUEIWx45FMPFahdo16grmTYqfnUzOvEMZAid6ONUF4eT9DcKY2ZBPGNyXxOnBwo71ohXJFVqnrUYwl2sZAPb1wZD";
 
 var fbRequest = request.defaults({
   uri: 'https://graph.facebook.com/me/messages',
@@ -12,18 +13,16 @@ var fbRequest = request.defaults({
 });
 
 var fbMessage = function(recipientId, msg, cb) {
-  var opts = {
-    form: {
-      recipient: {
-        id: recipientId
-      },
-      message: {
-        text: msg
-      }
+  var form = {
+    "recipient": {
+      "id": recipientId
+    },
+    "message": {
+      "text": msg
     }
   };
 
-  return fbRequest(opts, function(err, res, body) {
+  return request.post({url: "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token, form: form}, function(err, res, body) {
     if (cb) {
       console.log("sent request...");
       return cb(err || body.error && body.error.message, body);
@@ -43,7 +42,6 @@ var actions = {
     });
   },
   merge: function(sessionId, context, entities, message, cb) {
-    console.log("merge merge");
     return cb(context);
   },
   error: function(sessonId, context, err) {
