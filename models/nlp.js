@@ -2,7 +2,7 @@ var nlp = {};
 var url = "https://seconds-messenger.herokuapp.com/webhook";
 var Wit = require('node-wit').Wit;
 var request = require('request');
-var access_token = "CAADk55E4jhUBADAlNpoZCthS4VA20NmXiD4ZBmbZCy9vk1I9SRt4KzUsaAHzd8F8zMw2YwQfATcis64ePJNI6JKH7Fp7fuTbWTuFdwVNZBkbWUEIWx45FMPFahdo16grmTYqfnUzOvEMZAid6ONUF4eT9DcKY2ZBPGNyXxOnBwo71ohXJFVqnrUYwl2sZAPb1wZD";
+var access_token = "EAAYms5aM4SoBAMAZCN2rFtE7oZArXwG6jyv0jIWIbrue4zmvhNW75HF4xNuK7V2uCBPPZBZA94wZAjdAR595wDtRhNcCSZCbtVXd9XIZAXVcPnNceDSBdaPMZCHbc3SBTpcyFBT49WkaBv7HLjWUP7f6MtlZC29OuEuutdcRoMUFrDQZDZD";
 
 var firstEntityValue = function(entities, entity) {
   var val = entities && entities[entity] &&
