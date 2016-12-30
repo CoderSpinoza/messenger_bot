@@ -38,7 +38,7 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
   console.log("post webhook");
   var messaging = getFirstMessagingEntry(req.body);
-
+  console.log(messaging);
   if (messaging && messaging.message) {
     var sender = messaging.sender.id;
     var sessionId = findOrCreateSession(sender);
@@ -57,9 +57,11 @@ router.post('/', function(req, res, next) {
         sessions[sessionId].context = context;
       });
     } else {
+      console.log("no message text...");
       console.log(req.body);
     }
   } else {
+    console.log("no messaging...");
     console.log(req.body);
   }
   return res.status(200).send();
