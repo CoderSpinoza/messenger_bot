@@ -36,6 +36,9 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
+  console.log("post webhook");
+  console.log(req);
+  console.log(req.body);
   var messaging = getFirstMessagingEntry(req.body);
 
   if (messaging && messaging.message) {
