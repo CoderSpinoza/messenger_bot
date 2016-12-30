@@ -33,16 +33,6 @@ var fbMessage = function(recipientId, msg, cb) {
   });
 };
 
-var fbStructuredMessage = function(recipientId, cb) {
-  var template = buildStructured(recipientId);
-  console.log(access_token);
-  return request.post({url: "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token, form: template}, function(err, res, body) {
-    if (cb) {
-      return cb(err || body.error && body.error.message, body);
-    }
-  });
-}
-
 var actions = {
   say: function(recipientId, context, message, cb) {
     fbMessage(recipientId, message, function(err, data) {
@@ -109,7 +99,7 @@ var categoryButtons = [
   }
 ];
 
-nlp.buildStructured = function(userId) {
+var buildStructured = function(userId) {
   return {
     "recipient":{
       "id": userId
@@ -200,9 +190,15 @@ nlp.buildStructured = function(userId) {
   }
 };
 
-nlp.buildSimple = function(userId, text) {
-
-};
+var fbStructuredMessage = function(recipientId, cb) {
+  var template = buildStructured(recipientId);
+  console.log(access_token);
+  return request.post({url: "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token, form: template}, function(err, res, body) {
+    if (cb) {
+      return cb(err || body.error && body.error.message, body);
+    }
+  });
+}
 
 nlp.processText = function(sessionId, msg, atts, context, cb) {
   if (msg == "list") {
