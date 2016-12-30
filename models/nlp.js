@@ -33,6 +33,15 @@ var fbMessage = function(recipientId, msg, cb) {
   });
 };
 
+var fbStructuredMessage = function(recipientId, cb) {
+  var template = buildStructured(recipientId);
+  return request.post({url: "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token, form: template}, function(err, res, body) {
+    if (cb) {
+      return cb(err || body.error && body.error.message, body);
+    }
+  });
+}
+
 var actions = {
   say: function(recipientId, context, message, cb) {
     fbMessage(recipientId, message, function(err, data) {
@@ -99,19 +108,114 @@ var categoryButtons = [
   }
 ];
 
-nlp.buildStructured = function(userId, text, buttons) {
+nlp.buildStructured = function(userId) {
   return {
     "recipient":{
       "id": userId
     },
-    "message":{
-      "attachment":{
-        "type":"template",
-        "payload":{
-          "template_type":"button",
-          "text": text,
-          "buttons": buttons
-        }
+    "message": {
+      "attachment": {
+          "type": "template",
+          "payload": {
+              "template_type": "list",
+              "elements": [
+                  {
+                      "title": "Classic T-Shirt Collection",
+                      "image_url": "https://peterssendreceiveapp.ngrok.io/img/collection.png",
+                      "subtitle": "See all our colors",
+                      "default_action": {
+                          "type": "web_url",
+                          "url": "https://peterssendreceiveapp.ngrok.io/shop_collection",
+                          "messenger_extensions": true,
+                          "webview_height_ratio": "tall",
+                          "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+                      },
+                      "buttons": [
+                          {
+                              "title": "View",
+                              "type": "web_url",
+                              "url": "https://peterssendreceiveapp.ngrok.io/collection",
+                              "messenger_extensions": true,
+                              "webview_height_ratio": "tall",
+                              "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+                          }
+                      ]
+                  },
+                  {
+                      "title": "Classic White T-Shirt",
+                      "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
+                      "subtitle": "100% Cotton, 200% Comfortable",
+                      "default_action": {
+                          "type": "web_url",
+                          "url": "https://peterssendreceiveapp.ngrok.io/view?item=100",
+                          "messenger_extensions": true,
+                          "webview_height_ratio": "tall",
+                          "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+                      },
+                      "buttons": [
+                          {
+                              "title": "Shop Now",
+                              "type": "web_url",
+                              "url": "https://peterssendreceiveapp.ngrok.io/shop?item=100",
+                              "messenger_extensions": true,
+                              "webview_height_ratio": "tall",
+                              "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+                          }
+                      ]
+                  },
+                  {
+                      "title": "Classic Blue T-Shirt",
+                      "image_url": "https://peterssendreceiveapp.ngrok.io/img/blue-t-shirt.png",
+                      "subtitle": "100% Cotton, 200% Comfortable",
+                      "default_action": {
+                          "type": "web_url",
+                          "url": "https://peterssendreceiveapp.ngrok.io/view?item=101",
+                          "messenger_extensions": true,
+                          "webview_height_ratio": "tall",
+                          "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+                      },
+                      "buttons": [
+                          {
+                              "title": "Shop Now",
+                              "type": "web_url",
+                              "url": "https://peterssendreceiveapp.ngrok.io/shop?item=101",
+                              "messenger_extensions": true,
+                              "webview_height_ratio": "tall",
+                              "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+                          }
+                      ]
+                  },
+                  {
+                      "title": "Classic Black T-Shirt",
+                      "image_url": "https://peterssendreceiveapp.ngrok.io/img/black-t-shirt.png",
+                      "subtitle": "100% Cotton, 200% Comfortable",
+                      "default_action": {
+                          "type": "web_url",
+                          "url": "https://peterssendreceiveapp.ngrok.io/view?item=102",
+                          "messenger_extensions": true,
+                          "webview_height_ratio": "tall",
+                          "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+                      },
+                      "buttons": [
+                          {
+                              "title": "Shop Now",
+                              "type": "web_url",
+                              "url": "https://peterssendreceiveapp.ngrok.io/shop?item=102",
+                              "messenger_extensions": true,
+                              "webview_height_ratio": "tall",
+                              "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+                          }
+                      ]
+                  }
+              ],
+               "buttons": [
+                  {
+                      "title": "View More",
+                      "type": "postback",
+                      "payload": "payload"
+                  }
+              ]
+          }
       }
     }
   }
@@ -122,9 +226,16 @@ nlp.buildSimple = function(userId, text) {
 };
 
 nlp.processText = function(sessionId, msg, atts, context, cb) {
-  wit.runActions(sessionId, msg, context, function(err, context) {
-    return cb(err, context);
-  });
+  if (msg == "list") {
+    console.log("returning list");
+    fbStructuredMessage(sessionId, function(err, data) {
+      return cb(err, context);
+    });
+  } else {
+    wit.runActions(sessionId, msg, context, function(err, context) {
+      return cb(err, context);
+    });
+  }
 };
 
 module.exports = nlp;
