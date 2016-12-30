@@ -56,6 +56,8 @@ router.post('/', function(req, res, next) {
 
         sessions[sessionId].context = context;
       });
+    } else {
+      console.log(req.body);
     }
   } else {
     console.log(req.body);
