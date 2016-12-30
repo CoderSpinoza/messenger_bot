@@ -43,7 +43,7 @@ router.post('/', function(req, res, next) {
     var sender = messaging.sender.id;
     var sessionId = findOrCreateSession(sender);
 
-    console.log(messaging.message);
+    console.log(messaging);
     var msg = messaging.message.text;
     var atts = messaging.message.attachments;
 
@@ -57,6 +57,8 @@ router.post('/', function(req, res, next) {
         sessions[sessionId].context = context;
       });
     }
+  } else {
+    console.log(req.body);
   }
   return res.status(200).send();
 });
