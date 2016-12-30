@@ -35,6 +35,7 @@ var fbMessage = function(recipientId, msg, cb) {
 
 var fbStructuredMessage = function(recipientId, cb) {
   var template = buildStructured(recipientId);
+  console.log(access_token);
   return request.post({url: "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token, form: template}, function(err, res, body) {
     if (cb) {
       return cb(err || body.error && body.error.message, body);
@@ -228,6 +229,7 @@ nlp.buildSimple = function(userId, text) {
 nlp.processText = function(sessionId, msg, atts, context, cb) {
   if (msg == "list") {
     console.log("returning list");
+    console.log(sessionId);
     fbStructuredMessage(sessionId, function(err, data) {
       return cb(err, context);
     });
