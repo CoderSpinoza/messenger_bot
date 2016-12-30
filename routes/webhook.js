@@ -37,14 +37,13 @@ router.get('/', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
   console.log("post webhook");
-  console.log(req);
-  console.log(req.body);
   var messaging = getFirstMessagingEntry(req.body);
 
   if (messaging && messaging.message) {
     var sender = messaging.sender.id;
     var sessionId = findOrCreateSession(sender);
 
+    console.log(messaging.message);
     var msg = messaging.message.text;
     var atts = messaging.message.attachments;
 
